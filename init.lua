@@ -81,8 +81,13 @@ If you experience any errors while trying to install kickstart, run `:checkhealt
 I hope you enjoy your Neovim journey,
 - TJ
 
+
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
+-- Tom: Enable if this if you want terminal colors, don't forget to disable colorschemes
+-- vim.opt.termguicolors = false
+-- vim.opt.background = 'dark' -- or "light"
+-- vim.cmd.colorscheme 'default'
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -114,9 +119,9 @@ vim.o.showmode = false
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
-end)
+-- vim.schedule(function()
+--   vim.o.clipboard = 'unnamedplus'
+-- end)
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -879,6 +884,7 @@ require('lazy').setup({
     },
   },
 
+  --[[
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -898,6 +904,23 @@ require('lazy').setup({
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-night'
+    end,
+  },
+      ]]
+  --
+  {
+    'ellisonleao/gruvbox.nvim',
+    priority = 1000, -- load before other UI plugins
+    opts = {
+      terminal_colors = true,
+      contrast = 'hard', -- "hard" | "soft" | "" (default)
+      transparent_mode = false,
+      italic = { comments = false }, -- like your Tokyonight setup
+    },
+    config = function(_, opts)
+      require('gruvbox').setup(opts)
+      vim.o.background = 'dark' -- use the Dark variant
+      vim.cmd.colorscheme 'gruvbox'
     end,
   },
 
