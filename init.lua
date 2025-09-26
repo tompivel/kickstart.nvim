@@ -512,7 +512,7 @@ require('lazy').setup({
       --
       -- In general, you have a "server" which is some tool built to understand a particular
       -- language (such as `gopls`, `lua_ls`, `rust_analyzer`, etc.). These Language Servers
-      -- (sometimes called LSP servers, but that's kind of like ATM Machine) are standalone
+      -- (sometimes called LSP servers, but tha/'s kind of like ATM Machine) are standalone
       -- processes that communicate with some "client" - in this case, Neovim!
       --
       -- LSP provides Neovim with features like:
@@ -686,6 +686,17 @@ require('lazy').setup({
         pyright = {},
         rust_analyzer = {},
         jdtls = {},
+        texlab = {
+          settings = {
+            texlab = {
+              chktex = {
+                onOpenAndSave = true, -- lint on open/save
+                onEdit = false, -- set true if you want live linting
+              },
+              diagnosticsDelay = 300, -- increase to ~800 if using onEdit and it feels chatty
+            },
+          },
+        },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -730,6 +741,7 @@ require('lazy').setup({
         'isort', -- Used to sort python imports
         'black', -- Used to format python code
         'markdownlint', -- Used to lint markdown
+        'latexindent', -- Used to format latex
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -914,21 +926,6 @@ require('lazy').setup({
   },
       ]]
   --
-  {
-    'ellisonleao/gruvbox.nvim',
-    priority = 1000, -- load before other UI plugins
-    opts = {
-      terminal_colors = true,
-      contrast = 'hard', -- "hard" | "soft" | "" (default)
-      transparent_mode = false,
-      italic = { comments = false }, -- like your Tokyonight setup
-    },
-    config = function(_, opts)
-      require('gruvbox').setup(opts)
-      vim.o.background = 'dark' -- use the Dark variant
-      vim.cmd.colorscheme 'gruvbox'
-    end,
-  },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -976,7 +973,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'latex' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -994,19 +991,6 @@ require('lazy').setup({
     --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
-  },
-
-  -- Added by Tom: The next plugin is for showing the preview of markdown files.
-  -- install with yarn or npm
-  {
-    'iamcco/markdown-preview.nvim',
-    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
-    build = 'cd app && npm install',
-    init = function()
-      vim.g.mkdp_filetypes = { 'markdown' }
-      vim.g.mkdp_browser = 'firefox' -- force Firefox
-    end,
-    ft = { 'markdown' },
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
@@ -1029,7 +1013,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
