@@ -1,15 +1,12 @@
-return {
-  'ellisonleao/gruvbox.nvim',
-  priority = 1000, -- load before other UI plugins
-  opts = {
-    terminal_colors = true,
-    contrast = 'hard', -- "hard" | "soft" | "" (default)
-    transparent_mode = false,
-    italic = { comments = false }, -- like your Tokyonight setup
-  },
-  config = function(_, opts)
-    require('gruvbox').setup(opts)
-    vim.o.background = 'dark' -- use the Dark variant
-    vim.cmd.colorscheme 'gruvbox'
-  end,
+local function gh(repo) return 'https://github.com/' .. repo end
+
+vim.pack.add { gh 'ellisonleao/gruvbox.nvim' }
+---@diagnostic disable-next-line: missing-fields
+require('gruvbox').setup {
+  terminal_colors = true,
+  contrast = 'hard', -- "hard" | "soft" | "" (default)
+  transparent_mode = false,
+  italic = { comments = false },
 }
+vim.o.background = 'dark' -- use the Dark variant
+vim.cmd.colorscheme 'gruvbox'
