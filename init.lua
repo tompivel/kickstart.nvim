@@ -681,6 +681,10 @@ do
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
     -- You can add other tools here that you want Mason to install
+    'isort', -- Used to sort python imports
+    'black', -- Used to format python code
+    'markdownlint', -- linting markdown
+    'prettierd', -- Used to format ts, js, tsx, jsx, html, css
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -718,7 +722,7 @@ do
     -- You can also specify external formatters in here.
     formatters_by_ft = {
       lua = { 'stylua' },
-      rust = { 'rustfmt' },
+      -- rust = { 'rustfmt' },
       -- Conform can also run multiple formatters sequentially
       python = { 'isort', 'black' },
       tex = { 'latexindent' },
