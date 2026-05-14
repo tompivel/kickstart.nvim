@@ -1,88 +1,3 @@
---[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-
-P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 -- Tom: Enable if this if you want terminal colors, don't forget to disable colorschemes
 -- vim.opt.termguicolors = false
@@ -94,7 +9,11 @@ P.S. You can delete this when you're done too. It's your config now! :)
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
+-- Set 4-space tabs everywhere (default for all buffers)
+vim.opt.expandtab = true -- pressing <Tab> inserts spaces
+vim.opt.tabstop = 4 -- a hard tab shows as 4 columns
+vim.opt.shiftwidth = 4 -- >> and autoindent use 4 spaces
+vim.opt.softtabstop = 4 -- <BS> over an indent removes 4 spaces
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
@@ -409,6 +328,21 @@ require('lazy').setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
+        defaults = {
+          layout_strategy = 'horizontal',
+          layout_config = {
+            -- overall Telescope window size (relative to Neovim)
+            width = 0.99, -- or an integer like 120
+            height = 0.95,
+
+            -- never hide preview just because the window is “too narrow”
+            -- preview_cutoff = 0,
+
+            -- per-layout fine tuning
+            -- horizontal = { preview_width = 0.65 }, -- 65% of the picker width
+            -- vertical   = { preview_height = 0.5  },
+          },
+        },
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
@@ -681,11 +615,12 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        vtsls = {},
         clangd = {},
         -- gopls = {},
         pyright = {},
-        rust_analyzer = {},
-        jdtls = {},
+        -- rust_analyzer = {},
+        -- jdtls = {}, changing for nvim-jdtls
         texlab = {
           settings = {
             texlab = {
@@ -740,8 +675,10 @@ require('lazy').setup({
         'stylua', -- Used to format Lua code
         'isort', -- Used to sort python imports
         'black', -- Used to format python code
-        'markdownlint', -- Used to lint markdown
-        'latexindent', -- Used to format latex
+        'markdownlint-cli2', -- Used to lint markdown
+        'jdtls',
+        'google-java-format', -- Used to format Java code
+        'prettierd', -- Used to format ts, js, tsx, jsx, html, css
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -796,9 +733,20 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
+        tex = { 'latexindent' },
+        plaintex = { 'latexindent' },
+        rust = { 'rustfmt' },
+        -- java = { 'google-java-format' }, -- Already using jdtls lsp format
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        scss = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
