@@ -37,7 +37,7 @@ do
   --  Schedule the setting after `UiEnter` because it can increase startup-time.
   --  Remove this option if you want your OS clipboard to remain independent.
   --  See `:help 'clipboard'`
-  vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
+  -- vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
   -- Enable break indent
   vim.o.breakindent = true
@@ -605,6 +605,7 @@ do
     -- gopls = {},
     -- pyright = {},
     rust_analyzer = {},
+    jdtls = {},
     --
     -- Some languages (like typescript) have entire language plugins that can be useful:
     --    https://github.com/pmizio/typescript-tools.nvim
@@ -660,6 +661,15 @@ do
       },
     },
   }
+
+  vim.pack.add {
+    { src = gh 'JavaHello/spring-boot.nvim', version = '218c0c26c14d99feca778e4d13f5ec3e8b1b60f0' },
+    gh 'MunifTanjim/nui.nvim',
+    gh 'mfussenegger/nvim-dap',
+    gh 'nvim-java/nvim-java',
+  }
+
+  require('java').setup()
 
   vim.pack.add {
     gh 'neovim/nvim-lspconfig',
@@ -839,7 +849,7 @@ do
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  local parsers = { 'bash', 'c', 'diff', 'html', 'java', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
